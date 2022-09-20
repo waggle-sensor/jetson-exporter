@@ -2,8 +2,8 @@ FROM golang:1.17-alpine as builder
 ARG TARGETARCH
 COPY . .
 RUN mkdir -p /app \
-  && make build \
-  && cp -r ./out/ /app/
+  && unset GOPATH \
+  && GOOS=linux GOARCH=${TARGETARCH} go build -o /app/jetson-exporter jetson_exporter.go
 
 FROM golang:1.17-alpine
 COPY --from=builder /app/ /app/
