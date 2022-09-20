@@ -23,10 +23,12 @@ func getenv(key string, def string) string {
 
 func main() {
 	var (
+		port        string
 		nodeName    string
 		metricsPath string
 	)
-	flag.StringVar(&nodeName, "nodename", getenv("KUBENODE", ""), "Sampling interval in milliseconds")
+	flag.StringVar(&port, "port", getenv("PORT", ""), "Port number to listen")
+	flag.StringVar(&nodeName, "nodename", getenv("KUBENODE", ""), "Name of the Kubernetes node")
 	config := &collector.TegraGPUCollectorConfig{}
 	flag.IntVar(&config.CollectionIntervalInMilli, "sampling", 100, "Sampling interval in milliseconds")
 	flag.StringVar(&config.LoadPath, "loadpath", "/sys/devices/gpu.0/load", "Path to GPU load")
@@ -36,7 +38,6 @@ func main() {
 	} else {
 		metricsPath = "/metrics"
 	}
-
 	fmt.Printf("Jetson exporter started\n")
 	fmt.Println("Parameters are:")
 	fmt.Printf("\t Sampling Interval: %d millisecond\n", config.CollectionIntervalInMilli)
@@ -50,5 +51,5 @@ func main() {
 	reg.MustRegister(collector)
 	go collector.RunUntil(stopCh)
 	http.Handle(metricsPath, promhttp.HandlerFor(reg, promhttp.HandlerOpts{EnableOpenMetrics: true}))
-	log.Fatal(http.ListenAndServe("0.0.0.0:9100", nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("0.0.0.0:%s", port), nil))
 }
