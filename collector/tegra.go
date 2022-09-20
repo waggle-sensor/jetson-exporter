@@ -110,7 +110,8 @@ func (c *TegraGPUCollector) readMetrics() {
 	if v, err := os.ReadFile(c.config.LoadPath); err == nil {
 		value, err := strconv.ParseFloat(strings.Trim(string(v), "\n"), 64)
 		if err == nil {
-			load := value / 100.
+			// load is ranged from 0 to 1000
+			load := value / 1000.
 			calcLoad(&c.averagedLoad1s, c.load1sCoeff, load)
 			calcLoad(&c.averagedLoad5s, c.load5sCoeff, load)
 			calcLoad(&c.averagedLoad15s, c.load15sCoeff, load)
