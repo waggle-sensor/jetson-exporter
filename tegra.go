@@ -1,10 +1,11 @@
-package collector
+package main
 
 import (
 	"math"
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -19,6 +20,7 @@ type TegraGPUCollectorConfig struct {
 
 // Interpretation comes from https://en.wikipedia.org/wiki/Load_(computing)
 type TegraGPUCollector struct {
+	mu              sync.Mutex
 	config          *TegraGPUCollectorConfig
 	deviceFrqPath   string
 	currentLoad     float64
@@ -75,23 +77,32 @@ func (c *TegraGPUCollector) Collect(ch chan<- prometheus.Metric) {
 	ch <- prometheus.MustNewConstMetric(
 		c.descCurrentLoad,
 		prometheus.GaugeValue,
-		c.currentLoad,
+		roundFloat(c.currentLoad, 2),
 	)
 	ch <- prometheus.MustNewConstMetric(
 		c.descLoad1s,
 		prometheus.GaugeValue,
-		c.averagedLoad1s,
+		roundFloat(c.averagedLoad1s, 2),
 	)
 	ch <- prometheus.MustNewConstMetric(
 		c.descLoad5s,
 		prometheus.GaugeValue,
-		c.averagedLoad5s,
+		roundFloat(c.averagedLoad5s, 2),
 	)
 	ch <- prometheus.MustNewConstMetric(
 		c.descLoad15s,
 		prometheus.GaugeValue,
-		c.averagedLoad5s,
+		roundFloat(c.averagedLoad5s, 2),
 	)
+}
+
+func (c *TegraGPUCollector) GetMetrics(m *Metrics) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	m.averagedLoad1s = c.averagedLoad1s
+	m.averagedLoad5s = c.averagedLoad5s
+	m.averagedLoad15s = c.averagedLoad15s
+	m.t = time.Now().UTC()
 }
 
 func (c *TegraGPUCollector) RunUntil(stopCh <-chan (bool)) {
@@ -110,11 +121,13 @@ func (c *TegraGPUCollector) readMetrics() {
 	if v, err := os.ReadFile(c.config.LoadPath); err == nil {
 		value, err := strconv.ParseFloat(strings.Trim(string(v), "\n"), 64)
 		if err == nil {
+			c.mu.Lock()
 			// load is ranged from 0 to 1000
 			load := value / 1000.
 			calcLoad(&c.averagedLoad1s, c.load1sCoeff, load)
 			calcLoad(&c.averagedLoad5s, c.load5sCoeff, load)
 			calcLoad(&c.averagedLoad15s, c.load15sCoeff, load)
+			c.mu.Unlock()
 		}
 	}
 }
@@ -122,4 +135,9 @@ func (c *TegraGPUCollector) readMetrics() {
 func calcLoad(load *float64, exp float64, n float64) {
 	*load *= exp
 	*load += n * (1. - exp)
+}
+
+func roundFloat(val float64, precision uint) float64 {
+	ratio := math.Pow(10, float64(precision))
+	return math.Round(val*ratio) / ratio
 }
