@@ -1,6 +1,12 @@
 # Jetson Exporter
 Jetson exporter is a metric provider for Jetson Tegra GPU. Scrapers can hit `/metrics` endpoint to get Prometheus-formatted metrics. 
 
+# Metrics
+Provided metrics include,
+- **sys.metrics.gpu.average.1s**: exponential moving average of GPU utilization over last 1 second
+- **sys.metrics.gpu.average.5s**: exponential moving average of GPU utilization over last 5 second
+- **sys.metrics.gpu.average.15s**: exponential moving average of GPU utilization over last 15 second
+
 # Kubernetes
 The exporter can be deployed as Kubernetes DaemonSet to provide the metrics per Jetson device.
 
