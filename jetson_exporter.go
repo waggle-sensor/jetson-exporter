@@ -34,6 +34,7 @@ func main() {
 	flag.StringVar(&publisherConfig.InfluxDBOrganization, "influxdb-org", getenv("INFLUXDB_ORG", "waggle"), "InfluxDB organization")
 	flag.StringVar(&publisherConfig.InfluxDBBucket, "influxdb-bucket", getenv("INFLUXDB_BUCKET", "waggle"), "InfluxDB bucket")
 	flag.IntVar(&publisherConfig.InfluxDBPublishInterval, "influxdb-interval", 1, "InlufxDB publishing interval in seconds")
+	flag.Parse()
 	fmt.Println("Jetson exporter started")
 	fmt.Println("Parameters are:")
 	fmt.Printf("\t Sampling Interval: %d millisecond\n", collectorConfig.CollectionIntervalInMilli)
