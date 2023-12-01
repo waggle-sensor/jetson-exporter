@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
@@ -28,7 +30,6 @@ func main() {
 	flag.StringVar(&collectorConfig.LoadPath, "loadpath", "/sys/devices/gpu.0/load", "Path to GPU load")
 	flag.StringVar(&collectorConfig.CurrentDeviceFrqPathRex, "devfreqpathrex", "/sys/devices/gpu.0/devfreq/*/cur_freq", "Path described in Regression to current frequency of GPU device")
 	var publisherConfig PublisherConfig
-	flag.StringVar(&publisherConfig.NodeName, "nodename", getenv("KUBENODE", ""), "Name of the Kubernetes node")
 	flag.StringVar(&publisherConfig.InfluxDBURL, "influxdb-url", getenv("INFLUXDB_URL", ""), "InfluxDB URL")
 	flag.StringVar(&publisherConfig.InfluxDBToken, "influxdb-token", getenv("INFLUXDB_TOKEN", ""), "InfluxDB token")
 	flag.StringVar(&publisherConfig.InfluxDBOrganization, "influxdb-org", getenv("INFLUXDB_ORG", "waggle"), "InfluxDB organization")
@@ -40,19 +41,34 @@ func main() {
 	fmt.Printf("\t Sampling Interval: %d millisecond\n", collectorConfig.CollectionIntervalInMilli)
 	fmt.Printf("\t Loadpath: %s\n", collectorConfig.LoadPath)
 	fmt.Printf("\t Endpoint: %s\n", metricsPath)
-	collector := NewTegraGPUCollector(&collectorConfig)
-	collector.Configure()
-	stopCh := make(chan bool, 1)
+	collector := NewTegraStats()
+
+	// watch signals to terminate external programs cleanly.
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc,
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGQUIT)
+	err := collector.Start()
+	if err != nil {
+		panic(err)
+	}
 	reg := prometheus.NewRegistry()
 	reg.MustRegister(collectors.NewGoCollector())
 	reg.MustRegister(collector)
-	go collector.RunUntil(stopCh)
-	if publisherConfig.InfluxDBURL != "" {
-		fmt.Println("InfluxDB URL is provided. Metrics will be published.")
-		fmt.Printf("\t Publishing Interval: %d second(s) \n", publisherConfig.InfluxDBPublishInterval)
-		publisher := NewInfluxDBPublisher(publisherConfig, collector)
-		go publisher.RunUntil(stopCh)
-	}
+	// go collector.RunUntil(stopCh)
 	http.Handle(metricsPath, promhttp.HandlerFor(reg, promhttp.HandlerOpts{EnableOpenMetrics: true}))
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("0.0.0.0:%s", port), nil))
+	go http.ListenAndServe(fmt.Sprintf("0.0.0.0:%s", port), nil)
+	for {
+		select {
+		// case line := <-m:
+		// 	// log.Println(line)
+		// 	parseTegraStats(line)
+		case <-sigc:
+			log.Printf("terminating")
+			collector.Close()
+			return
+		}
+	}
 }

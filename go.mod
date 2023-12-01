@@ -1,6 +1,6 @@
 module github.com/waggle-sensor/jetson-exporter
 
-go 1.17
+go 1.20
 
 require (
 	github.com/influxdata/influxdb-client-go/v2 v2.11.0
@@ -10,6 +10,7 @@ require (
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deepmap/oapi-codegen v1.8.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
