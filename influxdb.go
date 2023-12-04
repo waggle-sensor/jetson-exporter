@@ -1,5 +1,9 @@
 package main
 
+// This is archived to minimize functionality of jetson exporter
+// If metrics need to be published use metrics collection agents
+// like Grafana agent, Telegraf, Fluentd, etc.
+
 import (
 	"time"
 

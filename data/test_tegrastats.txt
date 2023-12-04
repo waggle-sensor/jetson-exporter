@@ -1,0 +1,76 @@
+# HELP tegra_cpu_frequency_hz CPU Clock frequency
+# TYPE tegra_cpu_frequency_hz gauge
+tegra_cpu_frequency_hz{cpu="1"} 1.42e+09
+tegra_cpu_frequency_hz{cpu="2"} 1.42e+09
+tegra_cpu_frequency_hz{cpu="3"} 1.42e+09
+tegra_cpu_frequency_hz{cpu="4"} 1.42e+09
+tegra_cpu_frequency_hz{cpu="5"} 1.42e+09
+tegra_cpu_frequency_hz{cpu="6"} 1.42e+09
+# HELP tegra_cpu_util_percentage Utilization of CPU in percentage
+# TYPE tegra_cpu_util_percentage gauge
+tegra_cpu_util_percentage{cpu="1"} 47
+tegra_cpu_util_percentage{cpu="2"} 23
+tegra_cpu_util_percentage{cpu="3"} 32
+tegra_cpu_util_percentage{cpu="4"} 22
+tegra_cpu_util_percentage{cpu="5"} 31
+tegra_cpu_util_percentage{cpu="6"} 96
+# HELP tegra_emc_frequency_hz External memory controller clock frequency
+# TYPE tegra_emc_frequency_hz gauge
+tegra_emc_frequency_hz 1.6e+09
+# HELP tegra_emc_util_percentage Utilization of external memory controller in percentage
+# TYPE tegra_emc_util_percentage gauge
+tegra_emc_util_percentage 2
+# HELP tegra_gpu_frequency_hz GPU clock frequency
+# TYPE tegra_gpu_frequency_hz gauge
+tegra_gpu_frequency_hz 1.109e+09
+# HELP tegra_gpu_util_percentage Utilization of GPU in percentage
+# TYPE tegra_gpu_util_percentage gauge
+tegra_gpu_util_percentage 0
+# HELP tegra_last_updated_timestamp_epoch An epoch time of when the stats were collected from the system
+# TYPE tegra_last_updated_timestamp_epoch gauge
+tegra_last_updated_timestamp_epoch 1.701465532e+09
+# HELP tegra_lfb_nblock_count Count of largest free block
+# TYPE tegra_lfb_nblock_count gauge
+tegra_lfb_nblock_count 7
+# HELP tegra_lfb_size_bytes Size of largest free block
+# TYPE tegra_lfb_size_bytes gauge
+tegra_lfb_size_bytes 4.194304e+06
+# HELP tegra_mts_bg_percentage Time spent in foreground tasks
+# TYPE tegra_mts_bg_percentage gauge
+tegra_mts_bg_percentage 9
+# HELP tegra_mts_fg_percentage Time spent in background tasks
+# TYPE tegra_mts_fg_percentage gauge
+tegra_mts_fg_percentage 1
+# HELP tegra_ram_total_bytes Total memory
+# TYPE tegra_ram_total_bytes gauge
+tegra_ram_total_bytes 8.148484096e+09
+# HELP tegra_ram_used_bytes Current used memory
+# TYPE tegra_ram_used_bytes gauge
+tegra_ram_used_bytes 5.500829696e+09
+# HELP tegra_swap_cached_bytes Current swap cache memory
+# TYPE tegra_swap_cached_bytes gauge
+tegra_swap_cached_bytes 2.9360128e+08
+# HELP tegra_swap_total_bytes Total swap memory
+# TYPE tegra_swap_total_bytes gauge
+tegra_swap_total_bytes 2.1253586944e+10
+# HELP tegra_swap_used_bytes Current swap used memory
+# TYPE tegra_swap_used_bytes gauge
+tegra_swap_used_bytes 1.030750208e+09
+# HELP tegra_temperature_celcius Temperature reading in Celcius
+# TYPE tegra_temperature_celcius gauge
+tegra_temperature_celcius{sensor="ao"} 29
+tegra_temperature_celcius{sensor="aux"} 30
+tegra_temperature_celcius{sensor="cpu"} 33.5
+tegra_temperature_celcius{sensor="gpu"} 31.5
+tegra_temperature_celcius{sensor="pmic"} 100
+tegra_temperature_celcius{sensor="thermal"} 31.350000381469727
+# HELP tegra_wattage_average_milliwatts Averaged Watts of the hardware
+# TYPE tegra_wattage_average_milliwatts gauge
+tegra_wattage_average_milliwatts{sensor="vdd_cpu_gpu_cv"} 2119
+tegra_wattage_average_milliwatts{sensor="vdd_in"} 5510
+tegra_wattage_average_milliwatts{sensor="vdd_soc"} 1051
+# HELP tegra_wattage_current_milliwatts Current Watts of the hardware
+# TYPE tegra_wattage_current_milliwatts gauge
+tegra_wattage_current_milliwatts{sensor="vdd_cpu_gpu_cv"} 2706
+tegra_wattage_current_milliwatts{sensor="vdd_in"} 6140
+tegra_wattage_current_milliwatts{sensor="vdd_soc"} 1074
