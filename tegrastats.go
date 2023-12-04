@@ -19,15 +19,15 @@ import (
 // Detailed description on how to intepret the tegrastats output
 // https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Utilities/util_tegrastats.html
 var (
-	regSwap      = regexp.MustCompile("SWAP (\\d+)\\/(\\d+)(\\w)B( ?)\\(cached (\\d+)(\\w)B\\)")
-	regCPU       = regexp.MustCompile("CPU \\[(.*?)\\]")
-	regValueFreq = regexp.MustCompile("\\b(\\d+)%@(\\d+)")
-	regRAM       = regexp.MustCompile("RAM (\\d+)\\/(\\d+)(\\w)B( ?)\\(lfb (\\d+)x(\\d+)(\\w)B\\)")
-	regEMC       = regexp.MustCompile("EMC_FREQ \\b(\\d+)%@(\\d+)")
-	regMTS       = regexp.MustCompile("MTS fg (\\d+)% bg (\\d+)%")
-	regGPU       = regexp.MustCompile("GR3D_FREQ \\b(\\d+)%@(\\d+)")
-	regWatt      = regexp.MustCompile("\\b(\\w+) ([0-9.]+)\\/([0-9.]+)\\b")
-	regTemp      = regexp.MustCompile("\\b(\\w+)@(-?[0-9.]+)C\\b")
+	regSwap      = regexp.MustCompile(`SWAP (\d+)\/(\d+)(\w)B( ?)\(cached (\d+)(\w)B\)`)
+	regCPU       = regexp.MustCompile(`CPU \[(.*?)\]`)
+	regValueFreq = regexp.MustCompile(`\b(\d+)%@(\d+)`)
+	regRAM       = regexp.MustCompile(`RAM (\d+)\/(\d+)(\w)B( ?)\(lfb (\d+)x(\d+)(\w)B\)`)
+	regEMC       = regexp.MustCompile(`EMC_FREQ \b(\d+)%@(\d+)`)
+	regMTS       = regexp.MustCompile(`MTS fg (\d+)% bg (\d+)%`)
+	regGPU       = regexp.MustCompile(`GR3D_FREQ \b(\d+)%@(\d+)`)
+	regWatt      = regexp.MustCompile(`\b(\w+) ([0-9.]+)\/([0-9.]+)\b`)
+	regTemp      = regexp.MustCompile(`\b(\w+)@(-?[0-9.]+)C\b`)
 
 	gBytes = 1024 * 1024 * 1024
 	mBytes = 1024 * 1024
@@ -153,6 +153,10 @@ func NewTegraStatsWithCommand(c *exec.Cmd) *TegraStats {
 		},
 	}
 	return newTegraStats
+}
+
+func (t *TegraStats) GetTegraStatsCommandWithArguments() []string {
+	return t.cmd.Args
 }
 
 func (t *TegraStats) parseTegraStats(s string) []prometheus.Metric {
