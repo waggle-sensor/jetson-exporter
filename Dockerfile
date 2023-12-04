@@ -16,6 +16,8 @@ RUN apt-get update \
 COPY etc/apt/sources.list.d/nvidia-l4t-apt-source.list \
   /etc/apt/sources.list.d/nvidia-l4t-apt-source.list
 RUN apt-key adv --fetch-key http://repo.download.nvidia.com/jetson/jetson-ota-public.asc \
+  && mkdir -p /opt/nvidia/l4t-packages/ \
+  && touch /opt/nvidia/l4t-packages/.nv-l4t-disable-boot-fw-update-in-preinstall \
   && apt-get update \
   && apt-get install --no-install-recommends -y \
   nvidia-l4t-tools
