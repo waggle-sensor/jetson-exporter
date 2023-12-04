@@ -386,7 +386,7 @@ func (t *TegraStats) Start() error {
 	if err != nil {
 		return err
 	}
-	log.Printf("child process %d", t.cmd.Process.Pid)
+	log.Printf("tegrastats starts with the process %d", t.cmd.Process.Pid)
 	go func() {
 		scanner := bufio.NewScanner(stdout)
 		for scanner.Scan() {
@@ -431,7 +431,7 @@ func (t *TegraStats) Collect(ch chan<- prometheus.Metric) {
 func (t *TegraStats) Close() {
 	if t.cmd != nil {
 		if t.cmd.Process != nil {
-			log.Printf("killing %d", t.cmd.Process.Pid)
+			log.Printf("Killing tegrastats process %d...", t.cmd.Process.Pid)
 			t.cmd.Process.Kill()
 		}
 	}
