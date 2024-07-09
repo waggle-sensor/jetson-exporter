@@ -25,8 +25,8 @@ var (
 	regRAM       = regexp.MustCompile(`RAM (\d+)\/(\d+)(\w)B( ?)\(lfb (\d+)x(\d+)(\w)B\)`)
 	regEMC       = regexp.MustCompile(`EMC_FREQ \b(\d+)%@(\d+)`)
 	regMTS       = regexp.MustCompile(`MTS fg (\d+)% bg (\d+)%`)
-	regGPU       = regexp.MustCompile(`GR3D_FREQ \b(\d+)%@(\d+)`)
-	regWatt      = regexp.MustCompile(`\b(\w+) ([0-9.]+)\/([0-9.]+)\b`)
+	regGPU       = regexp.MustCompile(`GR3D_FREQ \b(\d+)%@[[]*(\d+)[]]*`)
+	regWatt      = regexp.MustCompile(`\b(\w+) ([0-9.]+)[mW]*\/([0-9.]+)[mW]*\b`)
 	regTemp      = regexp.MustCompile(`\b(\w+)@(-?[0-9.]+)C\b`)
 
 	gBytes = 1024 * 1024 * 1024
