@@ -2,7 +2,7 @@
 Jetson exporter is a metric provider for Jetson Tegra GPU. Scrapers can hit `/metrics` endpoint to get Prometheus-formatted metrics. 
 
 # Metrics
-Provided metrics can be found in [tegrastats.go](./tegrastats.go)
+Provided metrics can be found in [pkg/tegrastats/tegrastats.go](./pkg/tegrastats/tegrastats.go)
 
 # Kubernetes
 The jetons exporter can be deployed as Kubernetes DaemonSet to provide the metrics per Jetson device.

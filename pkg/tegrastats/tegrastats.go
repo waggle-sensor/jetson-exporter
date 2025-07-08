@@ -1,4 +1,4 @@
-package main
+package tegrastats
 
 import (
 	"bufio"
@@ -159,7 +159,7 @@ func (t *TegraStats) GetTegraStatsCommandWithArguments() []string {
 	return t.cmd.Args
 }
 
-func (t *TegraStats) parseTegraStats(s string) []prometheus.Metric {
+func (t *TegraStats) ParseTegraStats(s string) []prometheus.Metric {
 	metrics := []prometheus.Metric{}
 	// RAM
 	if m := regRAM.FindAllStringSubmatch(s, len(s)); m != nil {
@@ -416,7 +416,7 @@ func (t *TegraStats) Collect(ch chan<- prometheus.Metric) {
 		log.Printf("Prometheus Collect called, but tegrastats not yet collected.")
 		return
 	}
-	if cm := t.parseTegraStats(statsStr); len(cm) > 0 {
+	if cm := t.ParseTegraStats(statsStr); len(cm) > 0 {
 		ch <- prometheus.MustNewConstMetric(
 			t.m["tegra_last_updated_timestamp_epoch"],
 			prometheus.GaugeValue,

@@ -1,4 +1,4 @@
-package main
+package influxdb
 
 // This is archived to minimize functionality of jetson exporter
 // If metrics need to be published use metrics collection agents
@@ -9,6 +9,7 @@ import (
 
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api/write"
+	"github.com/waggle-sensor/jetson-exporter/tegracollect"
 )
 
 type PublisherConfig struct {
@@ -20,20 +21,13 @@ type PublisherConfig struct {
 	InfluxDBBucket          string
 }
 
-type Metrics struct {
-	averagedLoad1s  float64
-	averagedLoad5s  float64
-	averagedLoad15s float64
-	t               time.Time
-}
-
 type InfluxDBPublisher struct {
 	config    PublisherConfig
 	client    influxdb2.Client
 	collector *TegraGPUCollector
 }
 
-func NewInfluxDBPublisher(pc PublisherConfig, c *TegraGPUCollector) *InfluxDBPublisher {
+func NewInfluxDBPublisher(pc PublisherConfig, c *tegracollect.TegraGPUCollector) *InfluxDBPublisher {
 	return &InfluxDBPublisher{
 		config:    pc,
 		collector: c,
@@ -46,7 +40,7 @@ func (p *InfluxDBPublisher) RunUntil(stopCh <-chan (bool)) {
 	for {
 		select {
 		case <-ticker.C:
-			m := Metrics{}
+			m := tegracollect.Metrics{}
 			p.collector.GetMetrics(&m)
 			p.publishMetrics(m)
 		case <-stopCh:

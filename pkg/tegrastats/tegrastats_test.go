@@ -1,4 +1,4 @@
-package main
+package tegrastats
 
 import (
 	"os"
@@ -18,7 +18,7 @@ func TestParseTegraStatsXavierNXJetPack411(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	reg.MustRegister(c)
 
-	metricsFile := "data/test_tegrastats_nx_jp411.txt"
+	metricsFile := "../../data/test_tegrastats_nx_jp411.txt"
 	// NOTE: Uncomment below to generate a new file.
 	//       Then, you will need to comment this out again for this unittest
 	// err := prometheus.WriteToTextfile(metricsFile, reg)
@@ -45,7 +45,7 @@ func TestParseTegraStatsXavierNXJetPack512(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	reg.MustRegister(c)
 
-	metricsFile := "data/test_tegrastats_nx_jp512.txt"
+	metricsFile := "../../data/test_tegrastats_nx_jp512.txt"
 	// NOTE: Uncomment below to generate a new file.
 	//       Then, you will need to comment this out again for this unittest
 	// err := prometheus.WriteToTextfile(metricsFile, reg)
@@ -72,7 +72,7 @@ func TestParseTegraStatsXavierNanoJetPack461(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	reg.MustRegister(c)
 
-	metricsFile := "data/test_tegrastats_xaviernano_jp461.txt"
+	metricsFile := "../../data/test_tegrastats_xaviernano_jp461.txt"
 	// NOTE: Uncomment below to generate a new file.
 	//       Then, you will need to comment this out again for this unittest
 	// err := prometheus.WriteToTextfile(metricsFile, reg)

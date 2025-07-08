@@ -1,4 +1,4 @@
-package main
+package tegracollect
 
 import (
 	"math"
@@ -10,6 +10,13 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 )
+
+type Metrics struct {
+	AveragedLoad1s  float64
+	AveragedLoad5s  float64
+	AveragedLoad15s float64
+	Timestamp       time.Time
+}
 
 // These paths are tested under Jetson Nano and NX on Sep 2022
 type TegraGPUCollectorConfig struct {
@@ -44,9 +51,9 @@ func NewTegraGPUCollector(config *TegraGPUCollectorConfig) *TegraGPUCollector {
 }
 
 func (c *TegraGPUCollector) Configure() error {
-	c.load1sCoeff = 1. / math.Exp(float64(c.config.CollectionIntervalInMilli)/1000.)   // sampling frequency over a second
-	c.load5sCoeff = 1. / math.Exp(float64(c.config.CollectionIntervalInMilli)/5000.)   // sampling frequency over 5 seconds
-	c.load15sCoeff = 1. / math.Exp(float64(c.config.CollectionIntervalInMilli)/15000.) // sampling frequency over 15 seconds
+	c.load1sCoeff = 1. / math.Exp(float64(c.config.CollectionIntervalInMilli)/1000.)
+	c.load5sCoeff = 1. / math.Exp(float64(c.config.CollectionIntervalInMilli)/5000.)
+	c.load15sCoeff = 1. / math.Exp(float64(c.config.CollectionIntervalInMilli)/15000.)
 	c.descCurrentLoad = prometheus.NewDesc(
 		"gpu_current_load",
 		"Current GPU load",
@@ -92,20 +99,20 @@ func (c *TegraGPUCollector) Collect(ch chan<- prometheus.Metric) {
 	ch <- prometheus.MustNewConstMetric(
 		c.descLoad15s,
 		prometheus.GaugeValue,
-		roundFloat(c.averagedLoad5s, 2),
+		roundFloat(c.averagedLoad15s, 2),
 	)
 }
 
 func (c *TegraGPUCollector) GetMetrics(m *Metrics) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	m.averagedLoad1s = c.averagedLoad1s
-	m.averagedLoad5s = c.averagedLoad5s
-	m.averagedLoad15s = c.averagedLoad15s
-	m.t = time.Now().UTC()
+	m.AveragedLoad1s = c.averagedLoad1s
+	m.AveragedLoad5s = c.averagedLoad5s
+	m.AveragedLoad15s = c.averagedLoad15s
+	m.Timestamp = time.Now().UTC()
 }
 
-func (c *TegraGPUCollector) RunUntil(stopCh <-chan (bool)) {
+func (c *TegraGPUCollector) RunUntil(stopCh <-chan bool) {
 	ticker := time.NewTicker(time.Duration(c.config.CollectionIntervalInMilli) * time.Millisecond)
 	for {
 		select {
@@ -122,7 +129,6 @@ func (c *TegraGPUCollector) readMetrics() {
 		value, err := strconv.ParseFloat(strings.Trim(string(v), "\n"), 64)
 		if err == nil {
 			c.mu.Lock()
-			// load is ranged from 0 to 1000
 			load := value / 1000.
 			calcLoad(&c.averagedLoad1s, c.load1sCoeff, load)
 			calcLoad(&c.averagedLoad5s, c.load5sCoeff, load)

@@ -3,7 +3,7 @@ ARG TARGETARCH
 COPY . .
 RUN mkdir -p /app \
   && unset GOPATH \
-  && CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build -o /app/jetson-exporter
+  && CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build -o /app/jetson-exporter ./cmd
 
 FROM waggle/plugin-base:1.1.1-base
 
